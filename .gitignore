@@ -1,0 +1,18 @@
+# Object files
+*.o
+
+# Precompile files
+*.gch
+*.pch
+
+# Dynamic libraries
+*.so
+
+# Compiled static libraries
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
