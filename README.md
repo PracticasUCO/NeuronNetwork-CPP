@@ -46,6 +46,10 @@ to use a modern compiler. I used clang++, but if you prefer g++, simply change i
 
 There is not other dependencies in the project.
 
+# There is a better way to do...
+I am always trying to improve my skills, so if you think that I did something wrong, or it can
+be do better, please make a new issue or a merge request.
+
 # License
 The MIT License (MIT)
 
