@@ -12,17 +12,18 @@ it is constructed with neurons ordered in layers.
 
 Each network must have the following layers:
 - An input layer, that maps the network inputs.
-- One or more hidden layers, that transform the data.
+- One or more hidden layers, that transform the input data.
 - One output layer, that projects the output of the network.
 
 And each layer can have one or more neurons (except the input layer, that have the real inputs of
 the network). Each layer is fully connected with next one.
 
 Each neuron process the information that receives from the layer where is connected with a nonlinear
-function.
+function. Of course, the used function depends of the type of the neuron (for more details
+<a href="https://github.com/PracticasUCO/NeuronNetwork-CPP/tree/readme-update#neuron-types">see Neuron types</a>).
 
-The multilayer perceptron follows a tecnique called backpropagation to learn (supervised learning).
-The backpropagation function will depend of the type of the neuron (as the spread out function).
+The multilayer perceptron follows a tecnique called backpropagation to learn over the time (supervised learning).
+As the output of a neuron, the backpropagation function will depend of the type of the neuron.
 
 # Neuron types
 ## Sigmoid neuron
@@ -34,8 +35,10 @@ the layer h is given by the following expresion:
 Where h is the layer index and n is the neuron index inside the layer.
 
 # Project structure
-- neuron.h contains the definition of a neuron base. It is defined as a pure virtual class, so all
-neurons must inherit from this class and redefine the refresh method.
+- <a href="https://github.com/PracticasUCO/NeuronNetwork-CPP/blob/master/neuron.cpp">neuron.h</a>
+contains the definition of a neuron base. It is defined as a pure virtual class, so all neurons must
+inherit from this class and redefine the refresh method.
+- <a href="https://github.com/PracticasUCO/NeuronNetwork-CPP/blob/master/sigmoid_neuron.h">sigmoid_neuron.h</a> contains the definition of a sigmoid neuron.
 
 # Dependencies
 The project is writed in ANSI C++ 2014 and it is not compatible with earlier standards, so you need
