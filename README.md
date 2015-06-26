@@ -41,8 +41,11 @@ inherit from this class and redefine the refresh method.
 - <a href="https://github.com/PracticasUCO/NeuronNetwork-CPP/blob/master/sigmoid_neuron.h">sigmoid_neuron.h</a> contains the definition of a sigmoid neuron.
 
 # Dependencies
-The project is writed in ANSI C++ 2014 and it is not compatible with earlier standards, so you need
+The project is written in ANSI C++ 2014 and it is not compatible with earlier standards, so you need
 to use a modern compiler. I used clang++, but if you prefer g++, simply change it in the makefile.
+
+I have also used the <a href="https://code.google.com/p/googletest/">Google Test Framework </a> to
+test my app.
 
 There is not other dependencies in the project.
 
