@@ -35,14 +35,22 @@ the layer h is given by the following expresion:
 Where h is the layer index and n is the neuron index inside the layer.
 
 # Project structure
-- <a href="https://github.com/PracticasUCO/NeuronNetwork-CPP/blob/master/neuron.cpp">neuron.h</a>
-contains the definition of a neuron base. It is defined as a pure virtual class, so all neurons must
-inherit from this class and redefine the refresh method.
-- <a href="https://github.com/PracticasUCO/NeuronNetwork-CPP/blob/master/sigmoid_neuron.h">sigmoid_neuron.h</a> contains the definition of a sigmoid neuron.
+The code is structured in 4 directories:
+- <strong>bin:</strong> where all binaries must be set
+- <strong>obj:</strong> where all c++ object must be set
+- <strong>src:</strong> where all app's code must be set
+- <strong>test:</strong> where all test must be set
+
+The obj and bin directories are created by the makefile on demand, so you don't need to worry
+about them. The src and test directories containt all the code of the application, in a organized
+way.
 
 # Dependencies
-The project is writed in ANSI C++ 2014 and it is not compatible with earlier standards, so you need
+The project is written in ANSI C++ 2014 and it is not compatible with earlier standards, so you need
 to use a modern compiler. I used clang++, but if you prefer g++, simply change it in the makefile.
+
+I have also used the <a href="https://code.google.com/p/googletest/">Google Test Framework </a> to
+test my app.
 
 There is not other dependencies in the project.
 
