@@ -1,5 +1,5 @@
-#include "sigmoid_neuron.h"
 #include <gtest/gtest.h>
+#include "neuron/sigmoid_neuron.h"
 
 using namespace mp;
 
