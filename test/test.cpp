@@ -1,4 +1,4 @@
-#include "neuron/sigmoid_neuron_test.h"
+#include "neuron/base_test.h"
 #include <gtest/gtest.h>
 
 int main(int argc, char ** argv) {
