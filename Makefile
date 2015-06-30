@@ -15,15 +15,12 @@ TEST_OBJECTS :=
 
 # Since the paths to the files are long, they are all defined here
 # Also the object's variables are updated
-neuron.h := $(SRCDIR)/neuron/neuron.h
-neuron.cpp := $(SRCDIR)/neuron/neuron.cpp
-neuron.o := $(OBJDIR)/neuron/neuron.o
-OBJECTS += $(neuron.o)
+base.h := $(SRCDIR)/neuron/base.h
 
-sigmoid_neuron_test.h := $(TESTDIR)/neuron/sigmoid_neuron_test.h
-sigmoid_neuron_test.cpp := $(TESTDIR)/neuron/sigmoid_neuron_test.cpp
-sigmoid_neuron_test.o := $(OBJDIR)/neuron/sigmoid_neuron.o
-TEST_OBJECTS += $(sigmoid_neuron_test.o)
+base_test.h := $(TESTDIR)/neuron/base_test.h
+base_test.cpp := $(TESTDIR)/neuron/base_test.cpp
+base_test.o := $(OBJDIR)/neuron/base_test.o
+TEST_OBJECTS += $(base_test.o)
 
 test.cpp := $(TESTDIR)/test.cpp
 test.o := $(OBJDIR)/test.o
@@ -32,22 +29,21 @@ TEST_OBJECTS += $(test.o)
 test.exe := $(BINDIR)/test
 
 # List of phony targets
-.PHONY: clean clean-all all
+.PHONY: clean clean-all all test
 
 # List of rules
-all: $(OBJECTS) $(test.exe)
+all: $(OBJECTS) test
 
-$(test.exe): $(TEST_OBJECTS) | $(BINDIR)
+test: $(test.exe)
+
+$(test.exe): $(TEST_OBJECTS) $(OBJECTS) | $(BINDIR)
 	$(CC) $(CFLAGS) $^ -o $@ -lgtest
 
-$(neuron.o): $(neuron.cpp) $(neuron.h) | $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(sigmoid_neuron_test.o): $(sigmoid_neuron_test.cpp) $(sigmoid_neuron_test.h) $(sigmoid_neuron.o) $(neuron.o) | $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(base_test.o): $(base_test.cpp) $(base_test.h) $(base.h) | $(OBJDIR)
+	$(CC) $(CFLAGS) -I$(SRCDIR) -c $< -o $@
 
 $(test.o): $(test.cpp) | $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -I$(SRCDIR) -c $< -o $@
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
