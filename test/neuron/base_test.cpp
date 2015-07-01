@@ -41,6 +41,70 @@ TEST_F(ParametizerConstructor, ParametersSet) {
   EXPECT_TRUE(neuron.before_layer().expired()) << "The neuron shall not have any layer before";
 }
 
+/**
+ * A layer constructor must resize neuron's factors to the before layer's size
+ * */
+TEST_F(LayerConstructor, FactorsHaveBeforeLayerSize) {
+  EXPECT_EQ(before_layer_pointer->size(), shared_neuron.factors_size());
+  EXPECT_EQ(before_layer_pointer->size(), weak_neuron.factors_size());
+
+  EXPECT_EQ(before_layer_pointer->size(), shared_neuron_no_bias.factors_size());
+  EXPECT_EQ(before_layer_pointer->size(), weak_neuron_no_bias.factors_size());
+}
+
+/**
+ * A layer constructor must enable/disable the bias
+ * */
+TEST_F(LayerConstructor, BiasIsSetAsDesired) {
+  EXPECT_TRUE(shared_neuron.bias_enabled());
+  EXPECT_TRUE(weak_neuron.bias_enabled());
+
+  EXPECT_FALSE(shared_neuron_no_bias.bias_enabled());
+  EXPECT_FALSE(weak_neuron_no_bias.bias_enabled());
+}
+
+/**
+ * A layer constructor must set a pointer to the layer that is selected
+ * */
+TEST_F(LayerConstructor, NeuronPointsToTheBeforeLayer) {
+  EXPECT_EQ(*before_layer_pointer, *shared_neuron.before_layer().lock());
+  EXPECT_EQ(*before_layer_pointer, *weak_neuron.before_layer().lock());
+
+  EXPECT_EQ(*before_layer_pointer, *shared_neuron_no_bias.before_layer().lock());
+  EXPECT_EQ(*before_layer_pointer, *weak_neuron_no_bias.before_layer().lock());
+}
+
+/**
+ * A null layer constructor must set the factor's length equal to zero
+ * */
+TEST_F(NullLayerConstructor, FactorsHaveAZeroLength) {
+  EXPECT_EQ(0, neuron.factors_size());
+  EXPECT_EQ(0, neuron_nullptr.factors_size());
+  EXPECT_EQ(0, neuron_no_bias.factors_size());
+  EXPECT_EQ(0, neuron_nullptr_no_bias.factors_size());
+}
+
+/*
+ * Bias must be set as desired in a null layer constructor
+ * */
+TEST_F(NullLayerConstructor, BiasIsSetAsDesired) {
+  EXPECT_TRUE(neuron.bias_enabled());
+  EXPECT_TRUE(neuron_nullptr.bias_enabled());
+
+  EXPECT_FALSE(neuron_no_bias.bias_enabled());
+  EXPECT_FALSE(neuron_nullptr_no_bias.bias_enabled());
+}
+
+/*
+ * The neuron must point to nullptr after use a null layer constructor
+ * */
+TEST_F(NullLayerConstructor, NeuronPointsToNullptr) {
+  EXPECT_TRUE(neuron.before_layer().expired());
+  EXPECT_TRUE(neuron_nullptr.before_layer().expired());
+  EXPECT_TRUE(neuron_no_bias.before_layer().expired());
+  EXPECT_TRUE(neuron_nullptr.before_layer().expired());
+}
+
 /*
  * Resize method must:
  * - Resize the factor's length

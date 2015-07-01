@@ -1,6 +1,6 @@
 # General settings
-CC := clang++
-CFLAGS := -std=c++14 -Wall -pedantic -ggdb3
+CXX := g++
+CXXFLAGS := -std=c++14 -Wall -pedantic -ggdb3 -march=native
 
 # Define src, obj, bin and test dirs inside basedir
 BASEDIR := .
@@ -37,13 +37,13 @@ all: $(OBJECTS) test
 test: $(test.exe)
 
 $(test.exe): $(TEST_OBJECTS) $(OBJECTS) | $(BINDIR)
-	$(CC) $(CFLAGS) $^ -o $@ -lgtest
+	$(CXX) $(CXXFLAGS) $^ -o $@ -lgtest
 
 $(base_test.o): $(base_test.cpp) $(base_test.h) $(base.h) | $(OBJDIR)
-	$(CC) $(CFLAGS) -I$(SRCDIR) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(SRCDIR) -c $< -o $@
 
 $(test.o): $(test.cpp) | $(OBJDIR)
-	$(CC) $(CFLAGS) -I$(SRCDIR) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(SRCDIR) -c $< -o $@
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
