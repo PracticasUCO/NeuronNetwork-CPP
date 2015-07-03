@@ -69,6 +69,34 @@ namespace MP { // Stands for MultilayerPerceptron
           }
 
           /**
+           * \brief It initializes a neuron with the factors_size's length equal to the before_layer's
+           * size, and bias enabled or disabled.
+           * \param before_layer pointer to the before layer
+           * \param bias_enabled indicates if the bias is enabled or not
+           * */
+          inline Base(const std::shared_ptr<std::vector<B>> &before_layer, const bool &bias_enabled) {
+            _bias_enabled = bias_enabled;
+            _before_layer = before_layer;
+            _bias = 0.0;
+            _bias_change = 0.0;
+            _last_bias_change = 0.0;
+            _delta = 0.0;
+
+            if(before_layer) resize(before_layer->size());
+            else resize(0);
+          }
+
+          /**
+           * \brief It initializes a neuron with the factors_size's length equal to the before_layer's
+           * size, and bias enabled or disabled.
+           * \param before_layer pointer to the before layer
+           * \param bias_enabled indicates if the bias is enabled or not
+           * */
+          inline Base(const std::weak_ptr<std::vector<B>> &before_layer, const bool &bias_enabled) :
+                 Base(before_layer.lock(), bias_enabled) {
+          }
+
+          /**
            * \brief It creates a copy of the given neuron.
            * \param n the neuron to be copied
            * **/
@@ -161,7 +189,7 @@ namespace MP { // Stands for MultilayerPerceptron
            * of the layer that is set.
            * \param layer the layer that is before this neuron.
            * */
-          inline void set_before_layer(std::shared_ptr<std::vector<B>> layer) {
+          inline void set_before_layer(const std::shared_ptr<std::vector<B>> &layer) {
             _before_layer = layer;
             resize(layer->size());
             set_output_refresh();
