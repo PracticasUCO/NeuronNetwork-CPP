@@ -18,7 +18,6 @@
 #ifndef ___NEURON___
 #define ___NEURON___
 #include <vector>
-#include <iostream>
 #include <memory>
 
 namespace MP { // Stands for MultilayerPerceptron
@@ -36,7 +35,7 @@ namespace MP { // Stands for MultilayerPerceptron
      * derived class must implement a method called refresh (used to propagate the outputs
      * throw the network).
      * */
-    template <class B>
+    template <typename B>
       class Base {
         public:
 
@@ -209,7 +208,7 @@ namespace MP { // Stands for MultilayerPerceptron
            * \return the output of this neuron.
            * */
           inline double output() {
-            if(need_refresh()) refresh();
+            if(need_refresh()) _output = refresh();
             return _output;
           }
 
@@ -244,7 +243,7 @@ namespace MP { // Stands for MultilayerPerceptron
            * \brief It returns the number of factors in the neuron
            * \return the factor's size
            * **/
-          inline int factors_size() const {
+          inline unsigned int factors_size() const {
             return _factors.size();
           }
 

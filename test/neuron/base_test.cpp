@@ -116,7 +116,7 @@ TEST_F(BaseMethods, ResizeMethod) {
     neuron.resize(i);
     ASSERT_EQ(i, neuron.factors_size()) << "Neuron's factors shall be resize to " << i;
 
-    for(int j = 0; j < neuron.factors_size(); j++) {
+    for(unsigned int j = 0; j < neuron.factors_size(); j++) {
       EXPECT_EQ(0, neuron.factor(j)) << "After a resize, neuron's factors must be zero.";
       EXPECT_EQ(0, neuron.factor_change(j)) << "After a reize, neuron's factors must be zero.";
       EXPECT_EQ(0, neuron.last_factor_change(j)) << "After a resize, neuron's factors must be zero";
