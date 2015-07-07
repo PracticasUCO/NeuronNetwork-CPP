@@ -26,7 +26,6 @@
 TEST_F(EmptyBase, FactorsAreEmpty) {
   EXPECT_EQ(0, empty.factors_size()) << "A empty neuron start with a zero factor's length";
   EXPECT_FALSE(empty.bias_enabled()) << "Bias must be disabled in a empty neuron";
-  EXPECT_TRUE(empty.before_layer().expired()) << "The neuron shall not have any layer before";
 }
 
 /*
@@ -38,71 +37,6 @@ TEST_F(EmptyBase, FactorsAreEmpty) {
 TEST_F(ParametizerConstructor, ParametersSet) {
   EXPECT_EQ(3, neuron.factors_size()) << "The neuron shall be constructed with a three factor's length";
   EXPECT_TRUE(neuron.bias_enabled()) << "Bias must be enabled";
-  EXPECT_TRUE(neuron.before_layer().expired()) << "The neuron shall not have any layer before";
-}
-
-/**
- * A layer constructor must resize neuron's factors to the before layer's size
- * */
-TEST_F(LayerConstructor, FactorsHaveBeforeLayerSize) {
-  EXPECT_EQ(before_layer_pointer->size(), shared_neuron.factors_size());
-  EXPECT_EQ(before_layer_pointer->size(), weak_neuron.factors_size());
-
-  EXPECT_EQ(before_layer_pointer->size(), shared_neuron_no_bias.factors_size());
-  EXPECT_EQ(before_layer_pointer->size(), weak_neuron_no_bias.factors_size());
-}
-
-/**
- * A layer constructor must enable/disable the bias
- * */
-TEST_F(LayerConstructor, BiasIsSetAsDesired) {
-  EXPECT_TRUE(shared_neuron.bias_enabled());
-  EXPECT_TRUE(weak_neuron.bias_enabled());
-
-  EXPECT_FALSE(shared_neuron_no_bias.bias_enabled());
-  EXPECT_FALSE(weak_neuron_no_bias.bias_enabled());
-}
-
-/**
- * A layer constructor must set a pointer to the layer that is selected
- * */
-TEST_F(LayerConstructor, NeuronPointsToTheBeforeLayer) {
-  EXPECT_EQ(*before_layer_pointer, *shared_neuron.before_layer().lock());
-  EXPECT_EQ(*before_layer_pointer, *weak_neuron.before_layer().lock());
-
-  EXPECT_EQ(*before_layer_pointer, *shared_neuron_no_bias.before_layer().lock());
-  EXPECT_EQ(*before_layer_pointer, *weak_neuron_no_bias.before_layer().lock());
-}
-
-/**
- * A null layer constructor must set the factor's length equal to zero
- * */
-TEST_F(NullLayerConstructor, FactorsHaveAZeroLength) {
-  EXPECT_EQ(0, neuron.factors_size());
-  EXPECT_EQ(0, neuron_nullptr.factors_size());
-  EXPECT_EQ(0, neuron_no_bias.factors_size());
-  EXPECT_EQ(0, neuron_nullptr_no_bias.factors_size());
-}
-
-/*
- * Bias must be set as desired in a null layer constructor
- * */
-TEST_F(NullLayerConstructor, BiasIsSetAsDesired) {
-  EXPECT_TRUE(neuron.bias_enabled());
-  EXPECT_TRUE(neuron_nullptr.bias_enabled());
-
-  EXPECT_FALSE(neuron_no_bias.bias_enabled());
-  EXPECT_FALSE(neuron_nullptr_no_bias.bias_enabled());
-}
-
-/*
- * The neuron must point to nullptr after use a null layer constructor
- * */
-TEST_F(NullLayerConstructor, NeuronPointsToNullptr) {
-  EXPECT_TRUE(neuron.before_layer().expired());
-  EXPECT_TRUE(neuron_nullptr.before_layer().expired());
-  EXPECT_TRUE(neuron_no_bias.before_layer().expired());
-  EXPECT_TRUE(neuron_nullptr.before_layer().expired());
 }
 
 /*
@@ -206,23 +140,4 @@ TEST_F(BaseMethods, Factors) {
   std::vector<double> factors = neuron.factors();
 
   ASSERT_EQ(factors.size(), neuron.factors_size());
-}
-
-/**
- * Set Before Layer must:
- * - Set before layer
- * - Update factor's length
- * */
-TEST_F(BaseMethods, SetBeforeLayer) {
-  std::vector<double> bl;
-
-  for(int i = 0; i < 5; i++) {
-    bl.push_back(i);
-  }
-
-  neuron.set_before_layer(std::make_shared<std::vector<double>>(bl));
-  auto pointer = neuron.before_layer().lock();
-
-  ASSERT_EQ(5, neuron.factors_size());
-  ASSERT_EQ(*pointer, bl);
 }
