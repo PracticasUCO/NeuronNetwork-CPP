@@ -18,11 +18,12 @@
 #ifndef ___NEURON___
 #define ___NEURON___
 #include <vector>
+#include <memory>
 
 namespace mp { // Stands for MultilayerPerceptron
   namespace neuron { //Neuron's namespace
     /**
-     * \class Base neuron.h
+     * \class base base.h
      * \brief This class represents a neuron's base in the network. Each neuron have an arbitrary
      *  number of inputs, a bias (that can be active or not) and a delta.
      *
@@ -184,13 +185,13 @@ namespace mp { // Stands for MultilayerPerceptron
          * \brief It refresh the neuron output if needed
          * */
         void refresh(const std::vector<double> &input_layer);
-        void refresh(const std::vector<base *> &neuron_layer);
+        void refresh(const std::vector<std::shared_ptr<base>> &neuron_layer);
 
         ~base();
 
       protected:
         virtual double calculate_output(const std::vector<double> &input_layer) =0;
-        virtual double calculate_output(const std::vector<base *> &neuron_layer) =0;
+        virtual double calculate_output(const std::vector<std::shared_ptr<base>> &neuron_layer) =0;
 
       private:
         std::vector<double> _factors;

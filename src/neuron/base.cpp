@@ -154,7 +154,7 @@ namespace mp {
       _output = calculate_output(input_layer);
     }
 
-    void base::refresh(const std::vector<base *> &neuron_layer) {
+    void base::refresh(const std::vector<std::shared_ptr<base>> &neuron_layer) {
       _output = calculate_output(neuron_layer);
     }
 

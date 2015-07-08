@@ -36,7 +36,7 @@ namespace mp {
       return 1/(1 + exp(-1 * sum));
     }
 
-    double sigmoid::calculate_output(const std::vector<base *> &neuron_layer) {
+    double sigmoid::calculate_output(const std::vector<std::shared_ptr<base>> &neuron_layer) {
       double sum = this->bias();
 
       for(unsigned int i = 0; ((i < neuron_layer.size()) || (i < this->factors_size())); i++) {
