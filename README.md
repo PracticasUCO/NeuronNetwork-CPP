@@ -60,20 +60,21 @@ I am always trying to improve my skills, so if you think that I did something wr
 be do better, please make a new issue or a merge request.
 
 # License
-<img src="http://www.gnu.org/graphics/gplv3-127x51.png"> </img> <br> <br>
-NeuronNetwork-CPP <br>
-Copyright (C) 2015  Pedro José Piquero Plaza
+<img src="http://www.gnu.org/graphics/agplv3-155x51.png"> </img> <br> <br>
+NeuronNetwork-CPP
+Copyright (C) 2015  Pedro José Piquero Plaza <gowikel@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
-it under the terms of the <a href="http://www.gnu.org/licenses/gpl-3.0.en.html"> GNU General Public License </a> as published by
-the Free Software Foundation, either version 3 of the License, or
+it under the terms of the <a href="http://www.gnu.org/licenses/agpl.html">GNU Affero General Public License</a>
+as published by the Free Software Foundation, either version 3 of the License, or
 any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 
