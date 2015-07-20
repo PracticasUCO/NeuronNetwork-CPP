@@ -59,6 +59,42 @@ namespace mp {
     }
   }
 
+  void network::spread_out() {
+    for(unsigned int i = 0; i < layers(); i++) {
+      for(unsigned int j = 0; j < layer_size( i ); j++) {
+        if( i == 0 ) neuron(i, j).lock()->refresh( _inputs );
+        else neuron(i, j).lock()->refresh( layer( i - 1 ) );
+      }
+    }
+
+    _outputs.clear();
+    _outputs.reserve( _output_layer.size() );
+
+    for( auto neuron : _output_layer ) {
+      _outputs.push_back( neuron->output() );
+    }
+  }
+
+  void network::apply_softmax() {
+    double sum = 0;
+    for(unsigned int i = 0; i < _outputs.size(); i++){
+      sum += _outputs.at( i );
+    }
+
+    for(unsigned int i = 0; i < _outputs.size(); i++) {
+      _outputs[i] /= sum;
+    }
+  }
+
+  void network::backpropagate(const vector<double> &inputs, const vector<double> &expected) {
+    feed(inputs);
+    spread_out();
+    reset_neuron_changes();
+    update_deltas(expected);
+    update_neuron_factors();
+    adjust_weights();
+  }
+
   unsigned int network::layers() const {
     return _hidden_layers.size() + 1;
   }
@@ -72,6 +108,10 @@ namespace mp {
                                  const unsigned int &neuron_index) const {
     if( layer_index == layers() - 1 ) return weak_ptr<base>( _output_layer.at( neuron_index ) );
     else return weak_ptr<base>( _hidden_layers.at( layer_index ).at( neuron_index ) );
+  }
+
+  vector<double> network::output() const {
+    return _outputs;
   }
 
   void network::fix_layer_inputs(const unsigned int &layer) {
@@ -94,9 +134,87 @@ namespace mp {
     }
   }
 
+  vector<double> network::output(const vector<double> &inputs) {
+    feed( inputs );
+    spread_out();
+    return _outputs;
+  }
+
   void network::fix_layer_inputs() {
     for(unsigned int i = 0; i < layers(); i++) {
       fix_layer_inputs( i );
+    }
+  }
+
+  const vector<shared_ptr<base>>& network::layer(const unsigned int &index) const {
+    if( index == layers() - 1 ) return _output_layer;
+    else return _hidden_layers.at( index );
+  }
+
+  void network::reset_neuron_changes() {
+    for(unsigned int i = 0; i < layers(); i++) {
+      for(unsigned int j = 0; j < layer_size( i ); j++) {
+        neuron(i, j).lock()->reset_changes();
+      }
+    }
+  }
+
+  void network::update_deltas(const vector<double> &expected) {
+    update_output_deltas(expected);
+    update_hidden_deltas();
+  }
+
+  void network::update_output_deltas(const vector<double> &expected) {
+    for(unsigned int i = 0; ((i < expected.size()) || (i < _output_layer.size())); i++) {
+      auto neuron = _output_layer.at( i );
+
+      double delta_value = -( expected.at(i) - neuron->output() ) * neuron->output();
+      delta_value *= (1 - neuron->output());
+
+      neuron->set_delta( delta_value );
+    }
+  }
+
+  void network::update_hidden_deltas() {
+    for(unsigned int h = layers() - 2; h < layers() - 1; h--) {
+      for(unsigned int n = 0; n < layer_size( h ); n++) {
+        auto hide_neuron = neuron(h, n).lock();
+        double delta = 0;
+
+        for(unsigned int i = 0; i < layer_size( h + 1 ); i++) {
+          auto next = neuron(h + 1, i).lock();
+          delta += (next->delta() * next->factor(i));
+        }
+
+        delta *= hide_neuron->output() * (1 - hide_neuron->output());
+        hide_neuron->set_delta(delta);
+      }
+    }
+  }
+
+  void network::update_neuron_factors() {
+    for(unsigned int i = 0; i < layers(); i++) {
+      for(unsigned int j = 0; j < layer_size( i ); j++) {
+        auto hide_neuron = neuron(i, j).lock();
+
+        for(unsigned int f = 0; f < hide_neuron->factors_size(); f++) {
+          if( i == 0 ) { // Between input and first hidden layer
+            hide_neuron->add_factor_change(f, hide_neuron->delta() * _inputs.at(f));
+          } else { // Between hidden layers
+            auto before_neuron = neuron( i - 1, j ).lock();
+            hide_neuron->add_factor_change(f, hide_neuron->delta() * before_neuron->output());
+          }
+        }
+      }
+    }
+  }
+
+  void network::adjust_weights() {
+    for(unsigned int i = 0; i < layers(); i++) {
+      for(unsigned int j = 0; j < layer_size( i ); j++) {
+        auto hide_neuron = neuron(i, j).lock();
+        hide_neuron->apply_changes(0.9, 0.1);
+      }
     }
   }
 }

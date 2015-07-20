@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <vector>
+#include <cmath>
 #include "network.h"
 
 using namespace mp;

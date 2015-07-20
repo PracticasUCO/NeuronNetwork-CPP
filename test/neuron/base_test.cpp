@@ -64,13 +64,11 @@ TEST_F(BaseMethods, ResizeMethod) {
  * - Update factor change and last factor change
  * */
 TEST_F(BaseMethods, SetFactorMethod) {
-  neuron.set_factor(0, 3);
-  neuron.set_factor(0, 2);
+  double factor = neuron.factor(0);
   neuron.set_factor(0, 1);
 
   EXPECT_EQ(1, neuron.factor(0)) << "The neuron must set the new factor value.";
-  EXPECT_EQ(2, neuron.factor_change(0)) << "The neuron must remember factor's changes.";
-  EXPECT_EQ(3, neuron.last_factor_change(0)) << "The neuron must remember factor's changes.";
+  ASSERT_EQ((neuron.factor(0) - factor), neuron.last_factor_change(0));
 }
 
 /*
@@ -80,23 +78,17 @@ TEST_F(BaseMethods, SetFactorMethod) {
  * */
 TEST_F(BaseMethods, SetFactorsMethod) {
   std::vector<double> factor;
-  std::vector<double> factor_change;
-  std::vector<double> last_factor_change;
+  auto factors = neuron.factors();
 
   for(int i = 0; i < 3; i++) {
-    factor.push_back(1);
-    factor_change.push_back(2);
-    last_factor_change.push_back(3);
+    factor.push_back(3);
   }
 
-  neuron.set_factors(last_factor_change);
-  neuron.set_factors(factor_change);
   neuron.set_factors(factor);
 
   for(int i = 0; i < 3; i++) {
-    EXPECT_EQ(1, neuron.factor(i)) << "Neuron's factors shall be updated";
-    EXPECT_EQ(2, neuron.factor_change(i)) << "A neuron shall remember the factor's changes.";
-    EXPECT_EQ(3, neuron.last_factor_change(i)) << "A neuron shall remember the factor's changes.";
+    EXPECT_EQ(3, neuron.factor(i)) << "Neuron's factors shall be updated";
+    ASSERT_EQ((neuron.factor(i) - factors.at(i)), neuron.last_factor_change(i));
   }
 }
 
@@ -140,4 +132,76 @@ TEST_F(BaseMethods, Factors) {
   std::vector<double> factors = neuron.factors();
 
   ASSERT_EQ(factors.size(), neuron.factors_size());
+}
+
+/**
+ * Reset changes set changes to zero
+ * */
+TEST_F(BaseMethods, ResetChanges) {
+  auto factors = neuron.factors();
+
+  for(unsigned int i = 0; i < factors.size(); i++) {
+    factors[i] = 3;
+  }
+
+  neuron.set_factors(factors);
+
+  for(unsigned int i = 0; i < factors.size(); i++) {
+    factors[i] = 5;
+  }
+
+  neuron.set_factors(factors);
+  neuron.reset_changes();
+
+  factors = neuron.factors();
+
+  for(unsigned int i = 0; i < factors.size(); i++) {
+    ASSERT_EQ(0, neuron.factor_change(i));
+  }
+}
+
+TEST_F(BaseMethods, AddFactorChange) {
+  auto factor_changes = neuron.factor_changes();
+
+  for(unsigned int i = 0; i < factor_changes.size(); i++) {
+    EXPECT_EQ(0, factor_changes[i]);
+    factor_changes[i] = i + 1;
+  }
+
+  factor_changes = neuron.factor_changes();
+
+  for(unsigned int i = 0; i < factor_changes.size(); i++) {
+    EXPECT_EQ(0, factor_changes[i]);
+    neuron.add_factor_change(i, i + 1);
+  }
+
+  factor_changes = neuron.factor_changes();
+
+  for(unsigned int i = 0; i < factor_changes.size(); i++) {
+    ASSERT_EQ(i + 1, factor_changes.at( i ) );
+  }
+}
+
+TEST_F(BaseMethods, ApplyChanges) {
+  neuron.enable_bias();
+
+  for(unsigned int i = 0; i < neuron.factors_size(); i++) {
+    neuron.add_factor_change(i, (i + 1.0) / 2.0);
+  }
+
+  for(unsigned int i = 0; i < neuron.factors_size(); i++) {
+    neuron.add_factor_change(i, (i + 1.0) / 2.0);
+  }
+
+  neuron.add_bias_change(45);
+  neuron.add_bias_change(5);
+  neuron.add_bias_change(-12.5);
+  neuron.apply_changes();
+
+  for(unsigned int i = 0; i < neuron.factors_size(); i++) {
+    ASSERT_EQ(i + 1, neuron.factor(i));
+    ASSERT_EQ(i + 1, neuron.last_factor_change(i));
+  }
+
+  ASSERT_EQ(37.5, neuron.last_bias_change());
 }

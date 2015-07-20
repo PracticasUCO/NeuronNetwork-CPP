@@ -92,6 +92,24 @@ namespace mp {
                   const shared_ptr<base> &neuron);
 
       /**
+       * It spread out the network neurons!
+       * */
+      void spread_out();
+
+      /**
+       * It applies a softmax function to the neuron outputs.
+       * */
+      void apply_softmax();
+
+      /**
+       * It tries to config the network to ensure that it get closer next time it tries to
+       * get the given inputs,
+       * \param inputs the inputs of the network
+       * \param expected the expected result of the network
+       * */
+      void backpropagate(const vector<double> &inputs, const vector<double> &expected);
+
+      /**
        * It returns the number of layers of the network (hidden layers + output layer).
        * \return the number of hidden layers of the network
        * */
@@ -112,6 +130,20 @@ namespace mp {
        * */
       weak_ptr<base> neuron(const unsigned int &layer_index,
                             const unsigned int &neuron_index) const;
+
+      /**
+       * It returns current network outputs
+       * \return current network outputs
+       * */
+      vector<double> output() const;
+
+      /**
+       * It returns the network output when it is feeded with the given input
+       * \param inputs the inputs for the network
+       * \return the network outputs when it is feeded with the given inputs
+       * */
+      vector<double> output(const vector<double> &inputs);
+
     private:
       vector<double> _inputs;
       vector<vector<shared_ptr<base>>> _hidden_layers;
@@ -131,6 +163,36 @@ namespace mp {
        * set it.
        * */
       void fix_layer_inputs();
+
+      /*
+       * It retreives the layer specified at the given index
+       * \param index the index of the layer to return
+       * \return the specified layer
+       * */
+      const vector<shared_ptr<base>>& layer(const unsigned int &index) const;
+
+      /**
+       * It reset all neuron changes
+       * */
+      void reset_neuron_changes();
+
+      /**
+       * It update neuron's deltas
+       * \param expected expected network's outputs
+       * */
+      void update_deltas(const vector<double> &expected);
+      void update_output_deltas(const vector<double> &expected);
+      void update_hidden_deltas();
+
+      /**
+       * It updates all neuron factors to improve the network output.
+       * */
+      void update_neuron_factors();
+
+      /**
+       * It adjust the neuron factors according to their deltas
+       * */
+      void adjust_weights();
   };
 }
 #endif
