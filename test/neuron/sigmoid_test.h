@@ -51,28 +51,29 @@ class SigmoidWithNeuronLayer : public ::testing::Test {
       input.push_back(-2);
       input.push_back(1.5);
 
-      neuron_layer.push_back(new mp::neuron::sigmoid(input.size(), false));
-      neuron_layer.push_back(new mp::neuron::sigmoid(input.size(), false));
+      neuron_layer.push_back(std::shared_ptr<mp::neuron::base>(new mp::neuron::sigmoid(input.size(), false)));
+      neuron_layer.push_back(std::shared_ptr<mp::neuron::base>(new mp::neuron::sigmoid(input.size(), false)));
       neuron = mp::neuron::sigmoid(neuron_layer.size(), false);
 
-      for(unsigned int i = 0; i < neuron_layer.size(); i++) {
-        for(unsigned int j = 0; j < neuron_layer.at(i)->factors_size(); j++) {
-          neuron_layer.at(i)->set_factor(j, 1);
+      for(auto hide_neuron : neuron_layer) {
+        for(unsigned int j = 0; j < hide_neuron->factors_size(); j++) {
+          hide_neuron->set_factor(j, 1);
         }
       }
 
       neuron.set_factor(0, 1);
       neuron.set_factor(1, 1);
 
-      for(unsigned int i = 0; i < neuron_layer.size(); i++) {
-        neuron_layer.at(i)->refresh(input);
+      for(auto hide_neuron : neuron_layer) {
+        hide_neuron->refresh(input);
       }
+
       neuron.refresh(neuron_layer);
     }
 
     ~SigmoidWithNeuronLayer() {}
 
     std::vector<double> input;
-    std::vector<mp::neuron::base *> neuron_layer;
+    std::vector<std::shared_ptr<mp::neuron::base>> neuron_layer;
     mp::neuron::sigmoid neuron;
 };

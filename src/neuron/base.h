@@ -18,11 +18,12 @@
 #ifndef ___NEURON___
 #define ___NEURON___
 #include <vector>
+#include <memory>
 
 namespace mp { // Stands for MultilayerPerceptron
   namespace neuron { //Neuron's namespace
     /**
-     * \class Base neuron.h
+     * \class base base.h
      * \brief This class represents a neuron's base in the network. Each neuron have an arbitrary
      *  number of inputs, a bias (that can be active or not) and a delta.
      *
@@ -76,6 +77,35 @@ namespace mp { // Stands for MultilayerPerceptron
         void set_factors(const std::vector<double> &factors);
 
         /**
+         * \brief It adds the value to the next factor changes to be applied
+         * \param index the index of the factor that will be updated
+         * \param value value to add to the factor
+         * \note This function will not change the factor value now, it will do it
+         * in the future, when apply_factor_changes will be called
+         * */
+        void add_factor_change(const unsigned int &index, const double &value);
+
+        /**
+         * \brief It adds the new bias value to the bias change
+         * \param bias_change bias change to add
+         * */
+        void add_bias_change(const double &bias_change);
+
+        /**
+         * \brief It reads current factor changes, apply them and update last factor
+         * changes
+         * */
+        void apply_changes();
+
+        /**
+         * \brief It applyes the factor changes, according with the learning and momentum
+         * factors
+         * \param learning The learning factor applied to the factor change (between 0 and 1)
+         * \param momentum The momentum factor applied to the factor change (between 0 and 1)
+         * */
+        void apply_changes(const double &learning, const double &momentum);
+
+        /**
          * \brief It enables the neuron bias if it is disabled
          * **/
         void enable_bias();
@@ -97,6 +127,11 @@ namespace mp { // Stands for MultilayerPerceptron
          * own errors (0 it will not try, 1 it will do it completly)
          * **/
         void set_delta(const double &delta);
+
+        /**
+         * It resets to zero the input changes
+         * */
+        void reset_changes();
 
         /**
          * \brief It returns the neuron output. It refresh the output if needed.
@@ -184,13 +219,13 @@ namespace mp { // Stands for MultilayerPerceptron
          * \brief It refresh the neuron output if needed
          * */
         void refresh(const std::vector<double> &input_layer);
-        void refresh(const std::vector<base *> &neuron_layer);
+        void refresh(const std::vector<std::shared_ptr<base>> &neuron_layer);
 
         ~base();
 
       protected:
         virtual double calculate_output(const std::vector<double> &input_layer) =0;
-        virtual double calculate_output(const std::vector<base *> &neuron_layer) =0;
+        virtual double calculate_output(const std::vector<std::shared_ptr<base>> &neuron_layer) =0;
 
       private:
         std::vector<double> _factors;

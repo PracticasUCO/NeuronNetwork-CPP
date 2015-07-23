@@ -64,15 +64,75 @@ namespace mp {
     }
 
     void base::set_factor(const unsigned int &index, const double &value) {
-      _last_factor_changes[index] = _factor_changes[index];
-      _factor_changes[index] = _factors[index];
-      _factors[index] = value;
+      if(_factors.at( index ) != value) {
+        _last_factor_changes[index] = value - _factors.at( index );
+        _factors[index] = value;
+      }
     }
 
     void base::set_factors(const std::vector<double> &factors) {
-      _last_factor_changes = _factor_changes;
-      _factor_changes = _factors;
+      for(unsigned int i = 0; ((i < factors.size()) || (i < _factors.size())); i++) {
+        _last_factor_changes[i] = factors.at( i ) - _factors.at( i );
+      }
+
       _factors = factors;
+
+      // This is set to maintain consistency with the neuron. If the factors
+      // have changed, last factor changes and factor changes must have the same
+      // size.
+      //
+      // New values will have a zero last change.
+      if(_last_factor_changes.size() != _factors.size()) {
+        _last_factor_changes.resize( _factors.size(), 0.0 );
+        _factor_changes.resize( _factors.size(), 0.0 );
+      }
+    }
+
+    void base::add_factor_change(const unsigned int &index, const double &value) {
+      _factor_changes[index] += value;
+    }
+
+    void base::add_bias_change(const double &bias_change) {
+      _bias_change += bias_change;
+    }
+
+    void base::apply_changes() {
+      for(unsigned int i = 0; i < factors_size(); i++) {
+        double factor_change = _factor_changes.at( i );
+        if( factor_change != 0) {
+          _factors[i] += factor_change;
+          _last_factor_changes[i] = factor_change;
+          _factor_changes[i] = 0;
+        }
+      }
+
+      if(( bias_enabled() ) && (_bias_change != 0)) {
+        _last_bias_change = _bias_change;
+        _bias += _bias_change;
+        _bias_change = 0;
+      }
+    }
+
+    void base::apply_changes(const double &learning, const double &momentum) {
+      for(unsigned int i = 0; i < factors_size(); i++) {
+        double factor_change = learning * _factor_changes.at( i );
+        factor_change += momentum * learning * _last_factor_changes.at( i );
+
+        if( factor_change != 0) {
+          _factors[i] -= factor_change;
+          _last_factor_changes[i] = factor_change;
+          _factor_changes[i] = 0;
+        }
+      }
+
+      if(( bias_enabled() ) && (_bias_change != 0)) {
+        double bias_change = learning * _bias_change;
+        bias_change += learning * momentum * _last_bias_change;
+
+        _last_bias_change = bias_change;
+        _bias -= bias_change;
+        _bias_change = 0;
+      }
     }
 
     void base::enable_bias() {
@@ -85,14 +145,21 @@ namespace mp {
 
     void base::set_bias(const double &value) {
       if(bias_enabled()) {
-        _last_bias_change = _bias_change;
-        _bias_change = _bias;
+        _last_bias_change = value - _bias_change;
         _bias = value;
       }
     }
 
     void base::set_delta(const double &delta) {
       _delta = delta;
+    }
+
+    void base::reset_changes() {
+      for(unsigned int i = 0; i < _factor_changes.size(); i++) {
+        _factor_changes[i] = 0.0;
+      }
+
+      _bias_change = 0.0;
     }
 
     double base::output() const {
@@ -154,7 +221,7 @@ namespace mp {
       _output = calculate_output(input_layer);
     }
 
-    void base::refresh(const std::vector<base *> &neuron_layer) {
+    void base::refresh(const std::vector<std::shared_ptr<base>> &neuron_layer) {
       _output = calculate_output(neuron_layer);
     }
 

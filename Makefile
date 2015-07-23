@@ -20,10 +20,15 @@ base.cpp := $(SRCDIR)/neuron/base.cpp
 base.o := $(OBJDIR)/neuron/base.o
 OBJECTS += $(base.o)
 
-sigmoid.h = $(SRCDIR)/neuron/sigmoid.h
-sigmoid.cpp = $(SRCDIR)/neuron/sigmoid.cpp
-sigmoid.o = $(OBJDIR)/neuron/sigmoid.o
+sigmoid.h := $(SRCDIR)/neuron/sigmoid.h
+sigmoid.cpp := $(SRCDIR)/neuron/sigmoid.cpp
+sigmoid.o := $(OBJDIR)/neuron/sigmoid.o
 OBJECTS += $(sigmoid.o)
+
+network.h := $(SRCDIR)/network.h
+network.cpp := $(SRCDIR)/network.cpp
+network.o := $(OBJDIR)/network.o
+OBJECTS += $(network.o)
 
 base_test.h := $(TESTDIR)/neuron/base_test.h
 base_test.cpp := $(TESTDIR)/neuron/base_test.cpp
@@ -34,6 +39,11 @@ sigmoid_test.h := $(TESTDIR)/neuron/sigmoid_test.h
 sigmoid_test.cpp := $(TESTDIR)/neuron/sigmoid_test.cpp
 sigmoid_test.o := $(OBJDIR)/neuron/sigmoid_test.o
 TEST_OBJECTS += $(sigmoid_test.o)
+
+network_test.h := $(TESTDIR)/network_test.h
+network_test.cpp := $(TESTDIR)/network_test.cpp
+network_test.o := $(OBJDIR)/network_test.o
+TEST_OBJECTS += $(network_test.o)
 
 test.cpp := $(TESTDIR)/test.cpp
 test.o := $(OBJDIR)/test.o
@@ -50,7 +60,10 @@ all: $(OBJECTS) test
 $(base.o): $(base.cpp) $(base.h) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(sigmoid.o) : $(sigmoid.cpp) $(sigmoid.h) $(base.o) | $(OBJDIR)
+$(sigmoid.o): $(sigmoid.cpp) $(sigmoid.h) $(base.o) | $(OBJDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(network.o): $(network.cpp) $(network.h) $(base.o) $(sigmoid.o) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 test: $(test.exe)
@@ -58,10 +71,13 @@ test: $(test.exe)
 $(test.exe): $(TEST_OBJECTS) $(OBJECTS) | $(BINDIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ -lgtest
 
-$(base_test.o): $(base_test.cpp) $(base_test.h) $(base.h) | $(OBJDIR)
+$(base_test.o): $(base_test.cpp) $(base_test.h) $(base.o) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -Wno-unused-parameter -c $< -o $@
 
 $(sigmoid_test.o): $(sigmoid_test.cpp) $(sigmoid_test.h) $(sigmoid.o) $(base.o) | $(OBJDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(network_test.o): $(network_test.cpp) $(network_test.h) $(NEURONS) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(test.o): $(test.cpp) | $(OBJDIR)

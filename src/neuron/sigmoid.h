@@ -18,6 +18,7 @@
 #ifndef ___SIGMOID__NEURON___
 #define ___SIGMOID__NEURON___
 #include <vector>
+#include <memory>
 #include <cmath>
 #include "base.h"
 
@@ -40,7 +41,7 @@ namespace mp { // Stands for Multilayer Perceptron
 
       protected:
         double calculate_output(const std::vector<double> &input_layer) override;
-        double calculate_output(const std::vector<base *> &neuron_layer) override;
+        double calculate_output(const std::vector<std::shared_ptr<base>> &neuron_layer) override;
     };
   }
 }

@@ -16,6 +16,7 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include <gtest/gtest.h>
+#include <memory>
 #include "neuron/base.h"
 
 // Only with testing purposes
@@ -34,7 +35,7 @@ class FakeBase : public mp::neuron::base {
     return 0.0;
   }
 
-  inline double calculate_output(const std::vector<mp::neuron::base *> &neuron_layer) override {
+  inline double calculate_output(const std::vector<std::shared_ptr<mp::neuron::base>> &neuron_layer) override {
     return 0.0;
   }
 };
