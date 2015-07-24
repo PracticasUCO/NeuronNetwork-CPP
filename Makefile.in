@@ -30,6 +30,11 @@ network.cpp := $(SRCDIR)/network.cpp
 network.o := $(OBJDIR)/network.o
 OBJECTS += $(network.o)
 
+data.h := $(SRCDIR)/data.h
+data.cpp := $(SRCDIR)/data.cpp
+data.o := $(OBJDIR)/data.o
+OBJECTS += $(data.o)
+
 base_test.h := $(TESTDIR)/neuron/base_test.h
 base_test.cpp := $(TESTDIR)/neuron/base_test.cpp
 base_test.o := $(OBJDIR)/neuron/base_test.o
@@ -64,6 +69,9 @@ $(sigmoid.o): $(sigmoid.cpp) $(sigmoid.h) $(base.o) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(network.o): $(network.cpp) $(network.h) $(base.o) $(sigmoid.o) | $(OBJDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(data.o): $(data.cpp) $(data.h) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 test: $(test.exe)
