@@ -20,6 +20,9 @@ AX_CXX_COMPILE_STDCXX_11([], [mandatory])
 AC_CHECK_LIB([gtest], [main])
 
 # Checks for header files.
+AC_CHECK_HEADER([gtest/gtest.h],
+                [AC_DEFINE([HAVE_GTEST_H], 1)],
+                [AC_MSG_ERROR([unable to find the google test framework (gtest)])])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
