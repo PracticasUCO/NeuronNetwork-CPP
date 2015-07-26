@@ -14,3 +14,10 @@ bin/*
 # Compiled static libraries
 *.a
 *.lib
+
+# Autoconf stuff
+autom4te.cache
+Makefile
+config.h
+config.log
+config.status
