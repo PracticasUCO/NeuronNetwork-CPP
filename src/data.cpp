@@ -40,11 +40,11 @@ namespace mp {
     return _elements;
   }
 
-  weak_ptr<vector<double>> data::input(const unsigned int &index) {
+  weak_ptr<vector<double>> data::input(const unsigned int &index) const {
     return weak_ptr<vector<double>>(_inputs.at( index ));
   }
 
-  weak_ptr<vector<double>> data::output(const unsigned int &index) {
+  weak_ptr<vector<double>> data::output(const unsigned int &index) const {
     return weak_ptr<vector<double>>(_outputs.at( index ));
   }
 
@@ -54,7 +54,7 @@ namespace mp {
 
     if( file.is_open() ) {
       string header;
-      file >> header;
+      getline(file, header);
       sscanf(header.c_str(), "%u %u %u", &_inputs_length, &_outputs_length, &_elements);
 
       _inputs.clear();
@@ -71,7 +71,7 @@ namespace mp {
         input->reserve( _inputs_length );
         output->reserve( _outputs_length );
 
-        file >> line;
+        getline(file, line);
         auto values = split_string( line, ' ' );
 
         for(unsigned int j = 0; j < values.size(); j++) {

@@ -35,9 +35,9 @@ namespace mp {
       unsigned int inputs_length() const;
       unsigned int outputs_length() const;
       unsigned int elements() const;
+      weak_ptr<vector<double>> input(const unsigned int &index) const;
+      weak_ptr<vector<double>> output(const unsigned int &index) const;
 
-      weak_ptr<vector<double>> input(const unsigned int &index);
-      weak_ptr<vector<double>> output(const unsigned int &index);
       void reload(const string &path);
 
     private:
