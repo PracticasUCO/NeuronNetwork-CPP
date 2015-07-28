@@ -3,8 +3,8 @@
 m4_include([m4/m4-ax_cxx_compile_stdcxx_11.m4])
 
 AC_PREREQ([2.69])
-AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
-AC_CONFIG_SRCDIR([test/test.cpp])
+AC_INIT([IMC], [0.0.1], [https://github.com/PracticasUCO/NeuronNetwork-CPP/issues])
+AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

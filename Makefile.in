@@ -35,6 +35,9 @@ data.cpp := $(SRCDIR)/data.cpp
 data.o := $(OBJDIR)/data.o
 OBJECTS += $(data.o)
 
+main.cpp := $(SRCDIR)/main.cpp
+main.o := $(OBJDIR)/main.o
+
 base_test.h := $(TESTDIR)/neuron/base_test.h
 base_test.cpp := $(TESTDIR)/neuron/base_test.cpp
 base_test.o := $(OBJDIR)/neuron/base_test.o
@@ -60,13 +63,22 @@ test.o := $(OBJDIR)/test.o
 TEST_OBJECTS += $(test.o)
 
 
-test.exe := $(BINDIR)/test
+test := $(BINDIR)/test
+nn := $(BINDIR)/nn
 
 # List of phony targets
 .PHONY: clean clean-all all test
 
 # List of rules
-all: $(OBJECTS) test
+all: nn test
+
+nn: $(nn)
+
+$(nn): $(main.o) $(OBJECTS) | $(BINDIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+$(main.o): $(main.cpp) $(OBJECTS) | $(OBJDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(base.o): $(base.cpp) $(base.h) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -80,9 +92,9 @@ $(network.o): $(network.cpp) $(network.h) $(base.o) $(sigmoid.o) | $(OBJDIR)
 $(data.o): $(data.cpp) $(data.h) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-test: $(test.exe)
+test: $(test)
 
-$(test.exe): $(TEST_OBJECTS) $(OBJECTS) | $(BINDIR)
+$(test): $(TEST_OBJECTS) $(OBJECTS) | $(BINDIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ -lgtest
 
 $(base_test.o): $(base_test.cpp) $(base_test.h) $(base.o) | $(OBJDIR)
